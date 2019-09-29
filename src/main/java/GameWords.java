@@ -8,6 +8,7 @@ public class GameWords {
     String[] wordList;
     String word;
     String mixedWord;
+    String rowForCommit;
 
     public GameWords() throws FileNotFoundException {
         path = "C:\\Users\\daria\\IdeaProjects\\GameBot\\content\\words";
