@@ -54,7 +54,7 @@ public class Bot extends TelegramLongPollingBot
         if(msg.equals("/start"))
             return "Привет!\nЯ игровой бот, который заставит ваши мозги шевелиться!\nДавайте поиграем:)";
 
-        if((msg.toLowerCase().contains("да") || msg.toLowerCase().contains("давай")) && gameFlag == false )
+        if((msg.toLowerCase().contains("да") || msg.toLowerCase().contains("давай")) && !gameFlag)
         {
             gameFlag = true;
             return "Отлично!\n" +
@@ -99,7 +99,7 @@ public class Bot extends TelegramLongPollingBot
         if (msg.toLowerCase().equals("ещё"))
         {
             gameFlag = true;
-            return "Отлично!\nТы готов?:))";
+            return "Отлично!\nТы готов?:)";
         }
 
         return "Не понял!";
