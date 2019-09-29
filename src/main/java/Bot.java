@@ -96,7 +96,7 @@ public class Bot extends TelegramLongPollingBot
             resetGameWord();
             return "Напишите /start если захотите начать игру заново!\nДо новых встреч!";
         }
-        if (msg.toLowerCase().equals("ещё"))
+        if (msg.toLowerCase().equals("ещё") || msg.toLowerCase().equals("еще"))
         {
             gameFlag = true;
             return "Отлично!\nТы готов?:)";
