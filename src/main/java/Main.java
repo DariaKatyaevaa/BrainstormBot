@@ -1,7 +1,7 @@
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
-
+// чтобы сделть коммит ctrl + k, чтобы запушить ctrl+shift+k
 public class Main {
     public static void main(String[] args) {
         ApiContextInitializer.init();

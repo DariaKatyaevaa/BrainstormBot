@@ -11,26 +11,21 @@ import java.io.FileNotFoundException;
 // кнопки в режиме игры: закончить игру
 // добавить счетчик попыток в игру
 
-public class Bot extends TelegramLongPollingBot {
-    private long chatId;
+public class Bot extends TelegramLongPollingBot
+{
     private boolean gameFlag = false;
     private boolean gameStart = false;
     private int gameCount = 5;
     private GameWords game;
 
     @Override
-    public void onUpdateReceived(Update update) {
+    public void onUpdateReceived(Update update)
+    {
         update.getUpdateId();
-        SendMessage sendMessage = new SendMessage().setChatId(update.getMessage().getChatId());
-        chatId = update.getMessage().getChatId();
+        long chatId = update.getMessage().getChatId();
         try {
-            sendMessage.setText(inputMessage(update.getMessage().getText()));
+            sendMessage(chatId, inputMessage(update.getMessage().getText()));
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        try {
-            execute(sendMessage);
-        } catch (TelegramApiException e) {
             e.printStackTrace();
         }
     }
@@ -45,10 +40,21 @@ public class Bot extends TelegramLongPollingBot {
         return "932546483:AAEyztcGmmhwHwOIwcNO3Omq49n8kf3hPSg";
     }
 
-    private String inputMessage(String msg) throws FileNotFoundException {
+    private void sendMessage(long chatId , String text)
+    {
+        SendMessage message = new SendMessage()
+                .setChatId(chatId)
+                .setText(text);
+        try { execute(message); }
+        catch (TelegramApiException e) { e.printStackTrace(); }
+    }
+
+    private String inputMessage(String msg) throws FileNotFoundException
+    {
         if(msg.equals("/start"))
             return "Привет!\nЯ игровой бот, который заставит ваши мозги шевелиться!\nДавайте поиграем:)";
-        if(msg.toLowerCase().contains("да") || msg.toLowerCase().contains("давай")){
+        if(msg.toLowerCase().contains("да") || msg.toLowerCase().contains("давай"))
+        {
             gameFlag = true;
             return "Отлично!\n" +
                     "\n" +
@@ -58,31 +64,50 @@ public class Bot extends TelegramLongPollingBot {
                     "Начнём?";
         }
 
-        if (gameFlag && !gameStart) {
+        if (gameFlag && !gameStart)
+        {
             gameStart = true;
             return StartGame();
         }
-        if (gameStart && gameCount != 0){
-            if(msg.toLowerCase().contains(game.word) && game.word.contains(msg.toLowerCase()))
-                return "Верно!";
+        if (gameStart && gameCount != 0)
+        {
+            if((game.word).equals(msg) ||
+                    (msg.toLowerCase().contains(game.word) && game.word.contains(msg.toLowerCase())))
+            {
+                resetGameWord();
+                return "Верно!\n Напишите ЕЩЁ если хотите сыграть ещё раз!";
+            }
+            System.out.println(msg+'\n'+game.word);
             gameCount--;
-            return String.format("Попробуйте еще! \nОсталось %s попыток.", gameCount);
+            return String.format("Попробуйте ещё! \nОсталось %s попыток.", gameCount);
         }
 
-        if(gameStart && gameCount == 0){
-            gameCount = 5;
-            gameStart = false;
-            gameFlag = false;
-            return "К сожалению попытки закончились. Вы проиграли:(\n Хотите сыграть еще раз?";
+        if(gameCount==0 && gameStart)
+        {
+            resetGameWord();
+            return "К сожалению попытки закончились. Вы проиграли:(\n Хотите сыграть ещё раз?";
+        }
+
+        if (msg.toLowerCase().equals("ещё"))
+        {
+            gameFlag = true;
+            return "Отлично!\n";
         }
 
         return "Не понял!";
     }
 
-    private String StartGame() throws FileNotFoundException {
+    private String StartGame() throws FileNotFoundException
+    {
         game = new GameWords();
         return game.mixedWord;
     }
 
+    private void resetGameWord()
+    {
+        gameCount = 5;
+        gameStart = false;
+        gameFlag = false;
+    }
 
 }
