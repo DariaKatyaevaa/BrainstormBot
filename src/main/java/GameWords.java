@@ -10,7 +10,7 @@ public class GameWords {
     String mixedWord;
 
     public GameWords() throws FileNotFoundException {
-        path = "C:\\Users\\daria\\IdeaProjects\\GameBot\\content\\words";
+        path = "C:\\Users\\user\\IdeaProjects\\BrainstormBot\\content\\words";
         wordList = new Scanner(new File(path)).useDelimiter("\\Z").next().split("\n");
         word = getRandomWord(wordList);
         mixedWord = shuffle(word);

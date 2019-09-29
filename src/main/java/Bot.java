@@ -91,7 +91,7 @@ public class Bot extends TelegramLongPollingBot
         if (msg.toLowerCase().equals("ещё"))
         {
             gameFlag = true;
-            return "Отлично!\n";
+            return "Отлично!\n Ты готов?";
         }
 
         return "Не понял!";
