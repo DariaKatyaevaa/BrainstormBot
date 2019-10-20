@@ -52,15 +52,19 @@ public class Bot extends TelegramLongPollingBot
     private String inputMessage(String msg) throws FileNotFoundException
     {
         if(msg.equals("/start"))
+        {
+            resetGameWord();
             return "Привет!\nЯ игровой бот, который заставит ваши мозги шевелиться!\nДавайте поиграем:)";
-        if(msg.toLowerCase().contains("да") || msg.toLowerCase().contains("давай"))
+        }
+
+        if((msg.toLowerCase().contains("да") || msg.toLowerCase().contains("давай")) && !gameFlag)
         {
             gameFlag = true;
             return "Отлично!\n" +
-                    "\n" +
+                   "\n" +
                     "Правила нашей игры очень простые: перед Вами появится набор букв.\n" +
                     "Для того, чтобы выиграть вам нужно составить из этих букв слово.\n" +
-                    "Если вы не справитесь за 5 попыток, то я победил!\n" +
+                   "Если вы не справитесь за 5 попыток, то я победил!\n" +
                     "Начнём?";
         }
 
@@ -69,29 +73,36 @@ public class Bot extends TelegramLongPollingBot
             gameStart = true;
             return StartGame();
         }
-        if (gameStart && gameCount != 0)
+        if (gameStart && gameCount != 1)
         {
             if((game.word).equals(msg) ||
                     (msg.toLowerCase().contains(game.word) && game.word.contains(msg.toLowerCase())))
             {
                 resetGameWord();
-                return "Верно!\n Напишите ЕЩЁ если хотите сыграть ещё раз!";
+                return "Верно!\n Напишите ЕЩЁ если хотите сыграть ещё раз!\n Напишите НЕТ если хотите закончить игру.";
             }
             System.out.println(msg+'\n'+game.word);
             gameCount--;
-            return String.format("Попробуйте ещё! \nОсталось %s попыток.", gameCount);
+            if (gameCount!=1)
+                return String.format("Попробуйте ещё! \nОсталось %s попытки.", gameCount);
+            return String.format("Попробуйте ещё! \nОсталась %s попытка.", gameCount);
         }
 
-        if(gameCount==0 && gameStart)
+        if(gameCount==1 && gameStart)
         {
             resetGameWord();
-            return "К сожалению попытки закончились. Вы проиграли:(\n Хотите сыграть ещё раз?";
+            return "К сожалению, попытки закончились. Вы проиграли:(\nНапишите ЕЩЁ если хотите сыграть ещё раз!\nНапишите НЕТ если хотите закончить игру.";
         }
 
-        if (msg.toLowerCase().equals("ещё"))
+        if (msg.toLowerCase().equals("нет"))
+        {
+            resetGameWord();
+            return "Напишите /start если захотите начать игру заново!\nДо новых встреч!";
+        }
+        if (msg.toLowerCase().equals("ещё") || msg.toLowerCase().equals("еще"))
         {
             gameFlag = true;
-            return "Отлично!\n";
+            return "Отлично!\nТы готов?:)";
         }
 
         return "Не понял!";
