@@ -11,11 +11,13 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
-public class TelegramBot extends TelegramLongPollingBot
+class TelegramBot extends TelegramLongPollingBot
 {
     private UserManager userManager = new UserManager();
+    private HashMap<Long, ChatManager> chatManagerHashMap = new HashMap<>();
     private ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
 
     TelegramBot()
@@ -26,68 +28,117 @@ public class TelegramBot extends TelegramLongPollingBot
     @Override
     public void onUpdateReceived(Update update)
     {
-        Long chatId = update.getMessage().getChatId();
-        if(!userManager.users.containsKey(chatId))
-        {
+        if(update.getMessage().isGroupMessage()) {
             try {
-                userManager.users.put(chatId, new User(chatId));
+                workWithGroup(update);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
-            userManager.userMessageHandlerMap.put(userManager.users.get(chatId), new MessageHandler(userManager.users.get(chatId)));
         }
+        else {
+            Long chatId = update.getMessage().getChatId();
+
+            if (!userManager.users.containsKey(chatId)) {
+                try {
+                    userManager.users.put(chatId, new User(chatId));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                userManager.userMessageHandlerMap.put(userManager.users.get(chatId), new MessageHandler(userManager.users.get(chatId)));
+            }
+            String message;
+            String answer;
+            MessageHandler messageHandler = userManager.userMessageHandlerMap.get(userManager.users.get(chatId));
+            if (messageHandler.startGameTG && !userManager.users.get(chatId).isPlaying) {
+                try {
+                    startGame(update, userManager.users.get(chatId), chatId);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+            } else if (messageHandler.startGameTG && userManager.users.get(chatId).isPlaying)
+                playing(update, userManager.users.get(chatId), messageHandler, chatId);
+            else {
+                message = getMessage(update);
+                answer = messageHandler.getAnswer(message);
+                sendMessage(answer, chatId);
+            }
+        }
+    }
+
+    private void workWithGroup(Update update) throws FileNotFoundException {
+        Long chatId = update.getMessage().getChatId();
+        Integer userId = update.getMessage().getFrom().getId();
+        if (!chatManagerHashMap.containsKey(chatId))
+        {
+            chatManagerHashMap.put(chatId, new ChatManager(chatId));
+        }
+        if(!chatManagerHashMap.get(chatId).users.containsKey(userId))
+        {
+            chatManagerHashMap.get(chatId).users.put(userId, new User(userId));
+            chatManagerHashMap.get(chatId).userMessageHandlerMap.put(chatManagerHashMap.get(chatId).users.get(userId),
+                    new MessageHandler(chatManagerHashMap.get(chatId).users.get(userId)));
+        }
+
         String message;
         String answer;
-        MessageHandler messageHandler = userManager.userMessageHandlerMap.get(userManager.users.get(chatId));
-        if(messageHandler.startGameTG && !userManager.users.get(chatId).isPlaying) {
+        User user = chatManagerHashMap.get(chatId).users.get(userId);
+        MessageHandler messageHandler = chatManagerHashMap.get(chatId).userMessageHandlerMap.get(user);
+        if (messageHandler.startGameTG && !user.isPlaying) {
             try {
-                startGame(update, userManager.users.get(chatId));
+                startGame(update, user, chatId);
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
-        }
-        else if(messageHandler.startGameTG && userManager.users.get(chatId).isPlaying)
-            playing(update, userManager.users.get(chatId), messageHandler);
-        else
-        {
-            message = getMessage(update);
+        } else if (messageHandler.startGameTG && user.isPlaying)
+            playing(update, user, messageHandler, chatId);
+        else {
+            message = getMessage(update).replace("/", "").trim();
             answer = messageHandler.getAnswer(message);
             sendMessage(answer, chatId);
         }
     }
 
-    private void startGame(Update update, User user) throws TelegramApiException {
+    private void startGame(Update update, User user, Long chatId) throws TelegramApiException {
         user.isPlaying = true;
         SendMessage sendMessage = new SendMessage();
-        sendMessage.setReplyMarkup(replyKeyboardMarkup);
-        sendMessage.setChatId(user.chatId);
-        if(getMessage(update).toLowerCase().equals("слова"))
+        sendMessage.setChatId(chatId);
+        String message = getMessage(update).toLowerCase().replace("/", "").trim();
+        if("слова".equals(message))
         {
             user.isPlayingWord = true;
+            sendMessage.setReplyMarkup(replyKeyboardMarkup);
             sendMessage.setText(user.gameWords.startGame());
         }
-        else if(getMessage(update).toLowerCase().equals("города"))
+        else if("города".equals(message))
         {
             user.isPlayingCity = true;
+            sendMessage.setReplyMarkup(replyKeyboardMarkup);
             sendMessage.setText(user.gameCities.startGame());
         }
-        else if(getMessage(update).toLowerCase().equals("арифметика"))
+        else if("арифметика".equals(message))
         {
             user.isPlayingCalculate = true;
+            sendMessage.setReplyMarkup(replyKeyboardMarkup);
             sendMessage.setText(user.gameCalculate.startGame());
         }
+        else if("статистика".equals(message))
+        {
+            user.isPlaying = false;
+            sendMessage.setText(user.StatisticToString());
+        }
         else{
-            sendMessage.setText("Не понял");
+            user.isPlaying = false;
+            sendMessage.setText("Не понял, введите название игры!");
         }
         execute(sendMessage);
     }
 
-    private void playing(Update update, User user, MessageHandler messageHandler)
+    private void playing(Update update, User user, MessageHandler messageHandler, Long chatId)
     {
         if(user.isPlayingWord && user.isPlaying && !user.gameWords.stopGame)
         {
-            String msg = getMessage(update);
-            sendMessage(user.gameWords.giveAnswerToUser(msg), user.chatId);
+            String msg = getMessage(update).replace("/", "").trim();
+            sendMessage(user.gameWords.giveAnswerToUser(msg), chatId);
         }
         else if(user.gameWords.stopGame)
         {
@@ -98,8 +149,8 @@ public class TelegramBot extends TelegramLongPollingBot
 
         else if(user.isPlayingCity && user.isPlaying && !user.gameCities.gameStop)
         {
-            String msg = getMessage(update);
-            sendMessage(user.gameCities.giveAnswerToUser(msg), user.chatId);
+            String msg = getMessage(update).replace("/", "").trim();
+            sendMessage(user.gameCities.giveAnswerToUser(msg), chatId);
         }
         else if(user.gameCities.gameStop)
         {
@@ -110,8 +161,8 @@ public class TelegramBot extends TelegramLongPollingBot
 
         else if(user.isPlayingCalculate && user.isPlaying && !user.gameCalculate.stopGame)
         {
-            String msg = getMessage(update);
-            sendMessage(user.gameCalculate.giveAnswerToUser(msg), user.chatId);
+            String msg = getMessage(update).replace("/", "").trim();
+            sendMessage(user.gameCalculate.giveAnswerToUser(msg), chatId);
         }
         else if(user.gameCalculate.stopGame)
         {

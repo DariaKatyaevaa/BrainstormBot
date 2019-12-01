@@ -5,21 +5,22 @@ import oop.gamebot.games.Game;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.*;
 
 public class GameCities implements Game
 {
     private HashMap<String,ArrayList<String>> citiesMap = new HashMap<String,ArrayList<String>>();
     private String[] citiesList;
-    private ArrayList<String> usedCities;
+    private List<String> usedCities;
     private String lastLetter;
     public boolean gameStop = false;
     private User user;
 
     public GameCities(User user) throws FileNotFoundException
     {
-        String path = "C:\\Users\\daria\\IdeaProjects\\GameBot\\content\\cities";
-        citiesList = new Scanner(new File(path)).useDelimiter("\\Z").next().split("\n");
+        File file = new File(getClass().getClassLoader().getResource("cities").getFile());
+        citiesList = new Scanner(file).useDelimiter("\\Z").next().split("\n");
         usedCities = new ArrayList<>();
         this.user = user;
         CreateMap();
@@ -68,6 +69,7 @@ public class GameCities implements Game
 
     private String GetLast(String city)
     {
+        city = city.trim();
         String a = String.valueOf(city.charAt(city.length()-1));
         if ((a.charAt(0)=='ь') || (a.charAt(0)=='ъ') || (a.charAt(0)=='ы'))
             return String.valueOf(city.charAt(city.length()-2));
@@ -76,6 +78,7 @@ public class GameCities implements Game
 
     private String GetFirst(String city)
     {
+        city = city.trim();
         return String.valueOf(city.charAt(0));
     }
 
@@ -111,14 +114,14 @@ public class GameCities implements Game
             usedCities.add(city);
             return city;
         }
-        if("стоп".equals(message))
+        else if("стоп".equals(message))
         {
             gameStop = true;
             return "Хорошо, спасибо за игру!\n\n" +
                     "Если хотите поиграть в другую игру, напишите название игры или " +
                     "напишите ИГРЫ, чтобы получить список игр.";
         }
-        if("другой".equals(message))
+        else if("другой".equals(message))
         {
             gameStop = false;
             String city = GetRandomCity();
@@ -126,14 +129,18 @@ public class GameCities implements Game
             usedCities.add(city);
             return city;
         }
-        if (GetFirst(message).equals(lastLetter))
+        else if("статистика".equals(message))
+        {
+            return user.StatisticToString();
+        }
+        else if (GetFirst(message).equals(lastLetter))
         {
             if (usedCities.contains(message))
             {
                 user.statistic.get("Города")[1] += 1;
                 return "Этот город уже был";
             }
-            if (citiesMap.get(lastLetter).contains(message))
+            else if (citiesMap.get(lastLetter).contains(message))
             {
                 user.statistic.get("Города")[0] += 1;
                 usedCities.add(message);

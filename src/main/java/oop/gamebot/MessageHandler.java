@@ -18,7 +18,7 @@ class MessageHandler
     }
 
     String getAnswer(String message) {
-        if("/start".equals(message) || "привет".equals(message))
+        if("start".equals(message)  || "/start".equals(message)|| "привет".equals(message))
         {
             answersStory.add("/start");
             return "Привет!\n" +

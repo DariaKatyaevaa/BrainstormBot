@@ -98,19 +98,23 @@ public class GameCalculate implements Game
             stopGame = false;
             return sendEquation();
         }
-        if("еще".equals(message) || "ещё".equals(message))
+        else if("еще".equals(message) || "ещё".equals(message))
         {
             resetGame();
             return equation;
         }
-        if("стоп".equals(message))
+        else if("статистика".equals(message))
+        {
+            return user.StatisticToString();
+        }
+        else if("стоп".equals(message))
         {
             stopGame = true;
             return "Хорошо, спасибо за игру!\n\n" +
                     "Если хотите поиграть в другую игру, напишите название игры или " +
                     "напишите ИГРЫ, чтобы получить список игр.";
         }
-        if (attempts != 0)
+        else if (attempts != 0)
         {
             if(message.equals(answer))
             {
@@ -123,7 +127,7 @@ public class GameCalculate implements Game
             if (attempts == 1)
                 return String.format("Попробуйте еще! \nОсталось %s попытка.", attempts);
 
-            if (attempts == 0)
+            else if (attempts == 0)
             {
                 user.statistic.get("Арифметика")[1] += 1;
                 return "К сожалению попытки закончились. Вы проиграли:(\n " +

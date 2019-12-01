@@ -30,6 +30,18 @@ public class User
         isPlayingCalculate = false;
     }
 
+    User(Integer chatId) throws FileNotFoundException {
+        this.chatId = Long.valueOf(chatId);
+        gameWords = new GameWords(this);
+        gameCalculate = new GameCalculate(this);
+        gameCities = new GameCities(this);
+        CreateStatisticMap();
+        isPlaying = false;
+        isPlayingWord = false;
+        isPlayingCity = false;
+        isPlayingCalculate = false;
+    }
+
     private void CreateStatisticMap()
     {
         Integer[] numbersWord = new Integer[2];
@@ -46,7 +58,7 @@ public class User
         statistic.put("Города", numbersCity);
     }
 
-    String StatisticToString()
+    public String StatisticToString()
     {
         return "    Игра СЛОВА   \n" +
                 "Побед: " + statistic.get("Слова")[0] + "\n" +

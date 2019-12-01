@@ -13,15 +13,15 @@ public class GameWords implements Game
     private String word;
     private String mixedWord;
     private String[] wordList;
-    private ArrayList<String> usedWords;
+    private List<String> usedWords;
     private int attempts = 5;
     public boolean stopGame;
     private User user;
 
     public GameWords(User user) throws FileNotFoundException
     {
-        String path = "C:\\Users\\daria\\IdeaProjects\\GameBot\\content\\words";
-        wordList = new Scanner(new File(path)).useDelimiter("\\Z").next().split("\n");
+        File file = new File(getClass().getClassLoader().getResource("words").getFile());
+        wordList = new Scanner(file).useDelimiter("\\Z").next().split("\n");
         word = getRandomWord(wordList);
         mixedWord = shuffle(word);
         stopGame = false;
@@ -87,19 +87,23 @@ public class GameWords implements Game
             resetGame();
             return sendWord();
         }
-        if("начать".equals(message))
+        else if("начать".equals(message))
         {
             stopGame = false;
             return sendWord();
         }
-        if("стоп".equals(message))
+        else if("стоп".equals(message))
         {
             stopGame = true;
             return "Хорошо, спасибо за игру!\n\n" +
                     "Если хотите поиграть в другую игру, напишите название игры или " +
                     "напишите ИГРЫ, чтобы получить список игр.";
         }
-        if (attempts != 0)
+        else if("статистика".equals(message))
+        {
+            return user.StatisticToString();
+        }
+        else if (attempts != 0)
         {
             if(message.equals(word))
             {
@@ -113,7 +117,7 @@ public class GameWords implements Game
             if (attempts == 1)
                 return String.format("Попробуйте еще! \nОсталось %s попытка.", attempts);
 
-            if (attempts == 0)
+            else if (attempts == 0)
             {
                 user.statistic.get("Слова")[1] += 1;
                 return "К сожалению попытки закончились. Вы проиграли:(\n " +

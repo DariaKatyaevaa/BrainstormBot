@@ -49,7 +49,7 @@ class ConsoleBot
 
     private void StartGame(String game) throws FileNotFoundException
     {
-        if(game.equals("Слова"))
+        if("Слова".equals(game))
         {
             GameWords gameWords = new GameWords(user);
             sendMessage(gameWords.startGame());
@@ -61,7 +61,7 @@ class ConsoleBot
             }
 
         }
-        if(game.equals("Города"))
+        else if("Города".equals(game))
         {
             GameCities gameСities = new GameCities(user);
             sendMessage(gameСities.startGame());
@@ -73,7 +73,7 @@ class ConsoleBot
             }
 
         }
-        if(game.equals("Арифметика"))
+        else if("Арифметика".equals(game))
         {
             GameCalculate gameCalculate = new GameCalculate(user);
             sendMessage(gameCalculate.startGame());
