@@ -22,15 +22,15 @@ class ConsoleBot
         {
             String message = getMessage(sc);
             String answer = messageHandler.getAnswer(message);
-            if(messageHandler.startGame)
+            if(messageHandler.isStartGame())
             {
-                StartGame(messageHandler.game);
-                messageHandler.startGame = false;
-                messageHandler.stopGame = true;
+                StartGame(messageHandler.getGame());
+                messageHandler.isStartGame(false);
+                messageHandler.isStopGame(false);
             }
-            if(messageHandler.stopGame)
+            if(messageHandler.isStopGame())
             {
-                messageHandler.stopGame = false;
+                messageHandler.isStopGame(false);
                 continue;
             }
             sendMessage(answer);
@@ -54,7 +54,7 @@ class ConsoleBot
             GameWords gameWords = new GameWords(user);
             sendMessage(gameWords.startGame());
             sendMessage(gameWords.sendWord());
-            while (!gameWords.stopGame)
+            while (!gameWords.isStopGame())
             {
                 String msg = getMessage(sc);
                 sendMessage(gameWords.giveAnswerToUser(msg));
@@ -66,7 +66,7 @@ class ConsoleBot
             GameCities gameСities = new GameCities(user);
             sendMessage(gameСities.startGame());
             sendMessage(gameСities.GetRandomCity());
-            while (!gameСities.gameStop)
+            while (!gameСities.isStopGame())
             {
                 String msg = getMessage(sc);
                 sendMessage(gameСities.giveAnswerToUser(msg));
@@ -78,7 +78,7 @@ class ConsoleBot
             GameCalculate gameCalculate = new GameCalculate(user);
             sendMessage(gameCalculate.startGame());
             sendMessage(gameCalculate.sendEquation());
-            while (!gameCalculate.stopGame)
+            while (!gameCalculate.isStopGame())
             {
                 String msg = getMessage(sc);
                 sendMessage(gameCalculate.giveAnswerToUser(msg));

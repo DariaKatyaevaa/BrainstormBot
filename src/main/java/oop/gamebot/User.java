@@ -5,21 +5,22 @@ import oop.gamebot.games.words.GameWords;
 
 import java.io.FileNotFoundException;
 import java.util.HashMap;
+import java.util.Map;
 
 public class User
 {
-    Long chatId;
-    public HashMap<String, Integer[]> statistic = new HashMap<>();
-    GameWords gameWords;
-    GameCities gameCities;
-    GameCalculate gameCalculate;
-    boolean isPlaying;
-    boolean isPlayingWord;
-    boolean isPlayingCity;
-    boolean isPlayingCalculate;
+    private Long userId;
+    private Map<String, Integer[]> statistic = new HashMap<>();
+    private GameWords gameWords;
+    private GameCities gameCities;
+    private GameCalculate gameCalculate;
+    private boolean isPlaying;
+    private boolean isPlayingWord;
+    private boolean isPlayingCity;
+    private boolean isPlayingCalculate;
 
-    User(Long chatId) throws FileNotFoundException {
-        this.chatId = chatId;
+    User(Long userId) throws FileNotFoundException {
+        this.userId = userId;
         gameWords = new GameWords(this);
         gameCalculate = new GameCalculate(this);
         gameCities = new GameCities(this);
@@ -30,8 +31,8 @@ public class User
         isPlayingCalculate = false;
     }
 
-    User(Integer chatId) throws FileNotFoundException {
-        this.chatId = Long.valueOf(chatId);
+    User(Integer userId) throws FileNotFoundException {
+        this.userId = Long.valueOf(userId);
         gameWords = new GameWords(this);
         gameCalculate = new GameCalculate(this);
         gameCities = new GameCities(this);
@@ -40,6 +41,79 @@ public class User
         isPlayingWord = false;
         isPlayingCity = false;
         isPlayingCalculate = false;
+    }
+
+    public void setStatistic(String game, String status)
+    {
+        if("win".equals(status))
+        {
+            statistic.get(game)[0] += 1;
+        }
+        else if("lose".equals(status))
+        {
+            statistic.get(game)[1] += 1;
+        }
+    }
+
+    Long getUserId()
+    {
+        return userId;
+    }
+
+
+    GameWords getGameWords()
+    {
+        return gameWords;
+    }
+
+    GameCalculate getGameCalculate()
+    {
+        return gameCalculate;
+    }
+
+    GameCities getGameCities()
+    {
+        return gameCities;
+    }
+
+    boolean isPlaying()
+    {
+        return isPlaying;
+    }
+
+    boolean isPlayingWord()
+    {
+        return isPlayingWord;
+    }
+
+    boolean isPlayingCalculate()
+    {
+        return isPlayingCalculate;
+    }
+
+    boolean isPlayingCity()
+    {
+        return isPlayingCity;
+    }
+
+    void isPlaying(boolean status)
+    {
+        isPlaying = status;
+    }
+
+    void isPlayingWord(boolean status)
+    {
+        isPlayingWord = status;
+    }
+
+    void isPlayingCalculate(boolean status)
+    {
+        isPlayingCalculate = status;
+    }
+
+    void isPlayingCity(boolean status)
+    {
+        isPlayingCity = status;
     }
 
     private void CreateStatisticMap()

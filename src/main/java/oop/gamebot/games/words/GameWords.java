@@ -15,7 +15,7 @@ public class GameWords implements Game
     private String[] wordList;
     private List<String> usedWords;
     private int attempts = 5;
-    public boolean stopGame;
+    private boolean stopGame;
     private User user;
 
     public GameWords(User user) throws FileNotFoundException
@@ -27,6 +27,11 @@ public class GameWords implements Game
         stopGame = false;
         usedWords = new ArrayList<>();
         this.user = user;
+    }
+
+    public boolean isStopGame()
+    {
+        return stopGame;
     }
 
     private String shuffle(String word)
@@ -108,7 +113,7 @@ public class GameWords implements Game
             if(message.equals(word))
             {
                 resetGame();
-                user.statistic.get("Слова")[0] += 1;
+                user.setStatistic("Слова", "win");
                 return "Верно! Для того, чтобы сыграть еще раз напишите ЕЩЁ.";
             }
 
@@ -119,7 +124,7 @@ public class GameWords implements Game
 
             else if (attempts == 0)
             {
-                user.statistic.get("Слова")[1] += 1;
+                user.setStatistic("Слова", "lose");
                 return "К сожалению попытки закончились. Вы проиграли:(\n " +
                         "Я загадывал слово " + word + ".\n" +
                         "Для того, чтобы сыграть еще раз напишите ЕЩЁ.";

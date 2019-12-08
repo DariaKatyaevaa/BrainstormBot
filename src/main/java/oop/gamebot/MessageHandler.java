@@ -7,14 +7,49 @@ class MessageHandler
 {
     private List<String> answersStory = new LinkedList<>();
     private String[] games = new String[] {"Слова", "Арифметика", "Города"};
-    boolean startGame = false;
-    boolean startGameTG = false;
-    boolean stopGame = false;
+    private boolean startGame = false;
+    private boolean startGameTG = false;
+    private boolean stopGame = false;
     private User user;
-    String game;
+    private String game;
 
     MessageHandler(User user){
         this.user = user;
+    }
+
+    String getGame()
+    {
+        return game;
+    }
+
+    boolean isStartGameTG()
+    {
+        return startGameTG;
+    }
+
+    void isStartGameTG(boolean status)
+    {
+        startGameTG = status;
+    }
+
+    boolean isStartGame()
+    {
+        return startGame;
+    }
+
+    boolean isStopGame()
+    {
+        return stopGame;
+    }
+
+    void isStartGame(boolean status)
+    {
+        startGame = status;
+    }
+
+    void isStopGame(boolean status)
+    {
+        stopGame = status;
     }
 
     String getAnswer(String message) {
