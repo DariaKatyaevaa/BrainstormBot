@@ -1,2 +1,2 @@
 # BrainstormBot
-Game mainBot for telegram
+GameBot for telegram

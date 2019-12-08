@@ -1,0 +1,30 @@
+package oop.gamebot.games.words;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+public class GameWordsUnit4Test extends Assert {
+
+    @Before
+    public void setUp() {
+        var q = new GameWords(new User());
+        q.startGame();
+        var wrongAnswer = q.word + "a";
+        q.giveAnswerToUser("начать");
+    }
+
+    @Test
+    public testgiveAnswerToUser() {
+        assertEquals(String.format("Попробуйте еще! \nОсталось %s попытки.", q.attempts), q.giveAnswerToUser(wrongAnswer));
+        assertEquals(String.format("Попробуйте еще! \nОсталось %s попытки.", q.attempts), q.giveAnswerToUser(wrongAnswer));
+        assertEquals(String.format("Попробуйте еще! \nОсталось %s попытки.", q.attempts), q.giveAnswerToUser(wrongAnswer));
+        assertEquals(String.format("Попробуйте еще! \nОсталась %s попытка.", q.attempts), q.giveAnswerToUser(wrongAnswer));
+        assertEquals("К сожалению попытки закончились. Вы проиграли:(\n " +
+                "Ответ " + q.answer + ".\n" +
+                "Для того, чтобы сыграть еще раз напишите ЕЩЁ.", q.giveAnswerToUser(wrongAnswer));
+        assertEquals(q.mixedWord, q.giveAnswerToUser("еще"));
+        assertEquals("Верно! Для того, чтобы сыграть еще раз напишите ЕЩЁ.",q.giveAnswerToUser(q.answer));
+    }
+}

@@ -1,3 +1,5 @@
+package oop.gamebot;
+
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
@@ -25,8 +27,6 @@ class MainBot
             {
                 e.printStackTrace();
             }
-            //TelegramBot telegramBot = new TelegramBot();
-            //telegramBot.start();
         }
     }
 }

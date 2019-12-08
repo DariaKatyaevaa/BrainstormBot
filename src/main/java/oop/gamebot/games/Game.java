@@ -1,3 +1,5 @@
+package oop.gamebot.games;
+
 public interface Game {
     String startGame();
     void resetGame();
