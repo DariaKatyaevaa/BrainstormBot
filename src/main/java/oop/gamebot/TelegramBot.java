@@ -188,7 +188,7 @@ class TelegramBot extends TelegramLongPollingBot
             if(isGroup)
                 sendMessage.setText(chatManagerHashMap.get(chatId).getUser().StatisticToString());
             else
-                user.StatisticToString();
+                sendMessage.setText(user.StatisticToString());
         }
         else{
             user.isPlaying(false);
@@ -206,7 +206,8 @@ class TelegramBot extends TelegramLongPollingBot
                 sendMessage(chatManagerHashMap.get(chatId).getGameWords().giveAnswerToUser(msg), chatId);
             else
                 sendMessage(user.getGameWords().giveAnswerToUser(msg), chatId);
-            if(user.getGameWords().isStopGame() | chatManagerHashMap.get(chatId).getGameWords().isStopGame())
+            if(user.getGameWords().isStopGame() |
+                    (isGroup && chatManagerHashMap.get(chatId).getGameWords().isStopGame()))
             {
                 if(isGroup)
                 {
@@ -232,7 +233,8 @@ class TelegramBot extends TelegramLongPollingBot
                 sendMessage(chatManagerHashMap.get(chatId).getGameCities().giveAnswerToUser(msg), chatId);
             else
                 sendMessage(user.getGameCities().giveAnswerToUser(msg), chatId);
-            if(user.getGameCities().isStopGame()  | chatManagerHashMap.get(chatId).getGameCities().isStopGame())
+            if(user.getGameCities().isStopGame()  |
+                    (isGroup && chatManagerHashMap.get(chatId).getGameCities().isStopGame()))
             {
                 if(isGroup)
                 {
@@ -258,7 +260,8 @@ class TelegramBot extends TelegramLongPollingBot
             else
                 sendMessage(user.getGameCalculate().giveAnswerToUser(msg), chatId);
 
-            if(user.getGameCalculate().isStopGame() | chatManagerHashMap.get(chatId).getGameCalculate().isStopGame())
+            if(user.getGameCalculate().isStopGame() |
+                    (isGroup && chatManagerHashMap.get(chatId).getGameCalculate().isStopGame()))
             {
                 if(isGroup)
                 {
