@@ -16,15 +16,25 @@ public class GameWordsUnit4Test extends Assert {
     }
 
     @Test
-    public testgiveAnswerToUser() {
+    public void teststartGame(){
+        assertEquals("Отлично!\n" + "\n" +
+                "В этой игре вам всего лишь нужно получить ответ выражения.\n" +
+                "Для того, чтобы прекратить игру, напиши СТОП\n" +
+                "Давайте играть!\n", q.startGame());
+    }
+
+    @Test
+    public void testgiveAnswerToUser1() {
         assertEquals(String.format("Попробуйте еще! \nОсталось %s попытки.", q.attempts), q.giveAnswerToUser(wrongAnswer));
-        assertEquals(String.format("Попробуйте еще! \nОсталось %s попытки.", q.attempts), q.giveAnswerToUser(wrongAnswer));
-        assertEquals(String.format("Попробуйте еще! \nОсталось %s попытки.", q.attempts), q.giveAnswerToUser(wrongAnswer));
-        assertEquals(String.format("Попробуйте еще! \nОсталась %s попытка.", q.attempts), q.giveAnswerToUser(wrongAnswer));
-        assertEquals("К сожалению попытки закончились. Вы проиграли:(\n " +
-                "Ответ " + q.answer + ".\n" +
-                "Для того, чтобы сыграть еще раз напишите ЕЩЁ.", q.giveAnswerToUser(wrongAnswer));
-        assertEquals(q.mixedWord, q.giveAnswerToUser("еще"));
+    }
+
+    @Test
+    public void testgiveAnswerToUser2() {
         assertEquals("Верно! Для того, чтобы сыграть еще раз напишите ЕЩЁ.",q.giveAnswerToUser(q.answer));
+    }
+
+    @Test
+    public void testgiveAnswerToUser3() {
+        assertEquals("Не понял!", "какой-то текст");
     }
 }

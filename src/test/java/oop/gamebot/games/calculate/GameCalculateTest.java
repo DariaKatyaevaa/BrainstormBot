@@ -10,20 +10,33 @@ public class GameCalculateUnit4Test extends Assert {
     @Before
     public void setUp(){
         var q = new GameCalculate(new User);
-        var wrongAnswer = (Integer.MAX_VALUE - q.answer).toString();
-        q.startGame();
     }
 
     @Test
-    public void testgiveAnswerToUser(){
-        assertEquals(String.format("Попробуйте еще! \nОсталось %s попытки.", q.attempts), q.giveAnswerToUser(wrongAnswer));
-        assertEquals(String.format("Попробуйте еще! \nОсталось %s попытки.", q.attempts), q.giveAnswerToUser(wrongAnswer));
-        assertEquals(String.format("Попробуйте еще! \nОсталось %s попытки.", q.attempts), q.giveAnswerToUser(wrongAnswer));
-        assertEquals(String.format("Попробуйте еще! \nОсталась %s попытка.", q.attempts), q.giveAnswerToUser(wrongAnswer));
-        assertEquals("К сожалению попытки закончились. Вы проиграли:(\n " +
-                "Ответ " + q.answer + ".\n" +
-                "Для того, чтобы сыграть еще раз напишите ЕЩЁ.", q.giveAnswerToUser(wrongAnswer));
-        assertEquals(q.giveAnswerToUser("еще"), q.equation);
-        assertEquals(q.giveAnswerToUser(q.answer),"Верно! Для того, чтобы сыграть еще раз напишите ЕЩЁ.");
+    public void teststartGame(){
+        assertEquals("Отлично!\n" + "\n" +
+                "В этой игре вам всего лишь нужно получить ответ выражения.\n" +
+                "Для того, чтобы прекратить игру, напиши СТОП\n" +
+                "Давайте играть!\n", q.startGame());
     }
+
+    @Test
+    public void testgiveAnswerToUser1() {
+        q.startGame();
+        var wrongAnswer = (Integer.MAX_VALUE - q.answer).toString();
+        assertEquals(String.format("Попробуйте еще! \nОсталось %s попытки.", q.attempts), q.giveAnswerToUser(wrongAnswer));
+    }
+
+    @Test
+    public void testgiveAnswerToUser2() {
+        q.startGame();
+        assertEquals("Верно! Для того, чтобы сыграть еще раз напишите ЕЩЁ.",q.giveAnswerToUser(q.answer));
+    }
+
+    @Test
+    public void testgiveAnswerToUser3() {
+        assertEquals("Не понял!", "какой-то текст");
+    }
+
+
 }
