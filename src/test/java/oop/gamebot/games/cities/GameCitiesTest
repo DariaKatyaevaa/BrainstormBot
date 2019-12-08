@@ -9,12 +9,59 @@ public class GameCitiesUnit4Test extends Assert {
     @Before
     public void setUp() {
         var q = new GameCities(new User());
-        var q.startGame();
-        var lastLetter = GetLast(q.usedCities[0]);
+    }
+
+    @Test
+    public void teststartGame(){
+        assertEquals("Отлично!\n" + "\n" +
+                "Правила нашей игры очень простые: вы должны написать город, название которого начинается на букву,\n" +
+                "которой заканчивается предыдущее название города.\n" +
+                "Названий городов на Ъ и Ь знак нет. Поэтому напишите город на букву, стоящую перед Ъ и Ь знаком.\n" +
+                "Названия городов не должны повторяться.\n" +
+                "Для того, чтобы прекратить игру, напиши СТОП\n" +
+                "Для того, чтобы я поменял город, напиши ДРУГОЙ\n" +
+                "Начинаем игру!\n", q.startGame());
     }
 
     @Test
     public void testgiveAnswerToUser(){
-
+        q.startGame();
+        q.giveAnswerToUser("начать");
+        assertEquals("Неверно! Попробуйте другой город :)", q.giveAnswerToUser("a"));
     }
+
+    @Test
+    public void testgiveAnswerToUser1() {
+        q.citiesMap = new HashMap<String,ArrayList<String>>();
+        ArrayList<String> list = new ArrayList<>();
+        list.add("астана");
+        q.citiesMap.put("а",list);
+        q.startGame();
+        assertEquaels("Этот город уже был", q.giveAnswerToUser("астана"));
+    }
+
+    @Test
+    public void testgiveAnswerToUser2() {
+        q.citiesMap = new HashMap<String,ArrayList<String>>();
+        ArrayList<String> list = new ArrayList<>();
+        list.add("астана");
+        q.citiesMap.put("а",list);
+        q.startGame();
+        ArrayList<String> list = new ArrayList<>();
+        list.add("асбест");
+        list.add("арамиль");
+        q.citiesMap.put("а",list);
+        ArrayList<String> list = new ArrayList<>();
+        list.add("тюмень");
+        q.citiesMap.put("т",list);
+        assertEquals("тюмень", q.giveAnswerToUser("aсбест"));
+    }
+
+    @Test
+    public void testgiveAnswerToUser3() {
+        q.startGame();
+        var answer = (Integer.MAX_VALUE - q.answer).toString();
+        assertEquals(String.format("Попробуйте еще! \nОсталось %s попытки.", q.attempts), q.giveAnswerToUser(wrongAnswer));
+    }
+
 }

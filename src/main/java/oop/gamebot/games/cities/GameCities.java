@@ -9,9 +9,9 @@ import java.util.*;
 
 public class GameCities implements Game
 {
-    private Map<String,ArrayList<String>> citiesMap = new HashMap<String,ArrayList<String>>();
+    public Map<String,ArrayList<String>> citiesMap = new HashMap<String,ArrayList<String>>();
     private String[] citiesList;
-    private List<String> usedCities;
+    public List<String> usedCities;
     private String lastLetter;
     private  boolean gameStop = false;
     private User user;
