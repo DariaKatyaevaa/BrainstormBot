@@ -5,16 +5,15 @@ import oop.gamebot.games.Game;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.*;
 
 public class GameCities implements Game
 {
-    public HashMap<String,ArrayList<String>> citiesMap = new HashMap<String,ArrayList<String>>();
+    private Map<String,ArrayList<String>> citiesMap = new HashMap<String,ArrayList<String>>();
     private String[] citiesList;
-    public List<String> usedCities;
+    private List<String> usedCities;
     private String lastLetter;
-    public boolean gameStop = false;
+    private  boolean gameStop = false;
     private User user;
 
     public GameCities(User user) throws FileNotFoundException
@@ -24,6 +23,11 @@ public class GameCities implements Game
         usedCities = new ArrayList<>();
         this.user = user;
         CreateMap();
+    }
+
+    public boolean isStopGame()
+    {
+        return gameStop;
     }
 
     private void CreateMap()
@@ -67,7 +71,7 @@ public class GameCities implements Game
         return city;
     }
 
-    public String GetLast(String city)
+    private String GetLast(String city)
     {
         city = city.trim();
         String a = String.valueOf(city.charAt(city.length()-1));
@@ -137,12 +141,12 @@ public class GameCities implements Game
         {
             if (usedCities.contains(message))
             {
-                user.statistic.get("Города")[1] += 1;
+                user.setStatistic("Города", "lose");
                 return "Этот город уже был";
             }
             else if (citiesMap.get(lastLetter).contains(message))
             {
-                user.statistic.get("Города")[0] += 1;
+                user.setStatistic("Города", "win");
                 usedCities.add(message);
                 lastLetter = GetLast(message);
                 String city = GetRandomCityWith(citiesMap.get(lastLetter));

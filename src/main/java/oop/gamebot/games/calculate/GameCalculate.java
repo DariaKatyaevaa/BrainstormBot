@@ -8,15 +8,15 @@ import java.util.function.BinaryOperator;
 
 public class GameCalculate implements Game
 {
-    public String equation;
+    private String equation;
     private HashMap<Integer, BinaryOperator<Integer>> operations = new HashMap<>();
     private HashMap<Integer, String> stringOperations = new HashMap<>();
     private int first;
     private int second;
     private int operation;
-    public String answer;
-    public boolean stopGame = false;
-    public int attempts;
+    private String answer;
+    private boolean stopGame = false;
+    private int attempts;
     private User user;
 
 
@@ -37,6 +37,11 @@ public class GameCalculate implements Game
         stringOperations.put(1, " - ");
         stringOperations.put(2, " * ");
         stringOperations.put(3, " / ");
+    }
+
+    public boolean isStopGame()
+    {
+        return stopGame;
     }
 
     private void GenerateNumbers()
@@ -62,7 +67,7 @@ public class GameCalculate implements Game
 
     private void CreateEquation()
     {
-        equation = Integer.toString(first) + stringOperations.get(operation) + Integer.toString(second);
+        equation = first + stringOperations.get(operation) + second;
         BinaryOperator<Integer> func = operations.get(operation);
         answer = Integer.toString(func.apply(first, second));
     }
@@ -118,18 +123,18 @@ public class GameCalculate implements Game
         {
             if(message.equals(answer))
             {
-                user.statistic.get("Арифметика")[0] += 1;
+                user.setStatistic("Арифметика", "win");
                 return "Верно! Для того, чтобы сыграть еще раз напишите ЕЩЁ.";
             }
 
             attempts--;
 
             if (attempts == 1)
-                return String.format("Попробуйте еще! \nОсталась %s попытка.", attempts);
+                return String.format("Попробуйте еще! \nОсталось %s попытка.", attempts);
 
             else if (attempts == 0)
             {
-                user.statistic.get("Арифметика")[1] += 1;
+                user.setStatistic("Арифметика", "lose");
                 return "К сожалению попытки закончились. Вы проиграли:(\n " +
                         "Ответ " + answer + ".\n" +
                         "Для того, чтобы сыграть еще раз напишите ЕЩЁ.";
