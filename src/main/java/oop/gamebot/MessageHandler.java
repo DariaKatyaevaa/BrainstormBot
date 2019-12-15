@@ -6,7 +6,7 @@ import java.util.*;
 class MessageHandler
 {
     private List<String> answersStory = new LinkedList<>();
-    private String[] games = new String[] {"Слова", "Арифметика", "Города"};
+    private String[] games = new String[] {"Слова", "Арифметика", "Города", "Энциклопедия"};
     private boolean startGame = false;
     private boolean startGameTG = false;
     private boolean stopGame = false;
@@ -101,6 +101,17 @@ class MessageHandler
                     "В этой игре вам всего лишь нужно сосчитать ответ выражения.\n" +
                     "Для того, чтобы прекратить игру, напиши СТОП\n" +
                     "Давайте играть!\n";
+        }
+        if("энциклопедия".equals(message))
+        {
+            startGame = true;
+            game = "Энциклопедия";
+            answersStory.add("арифметика");
+            return "Отлично!\n" + "\n" +
+                    "Правила игры: ввм нужно выбрать правильное определения\n" +
+                    "для слова, которое вам будет предложенно.\n" +
+                    "Для того, чтобы прекратить игру, напиши СТОП\n" +
+                    "Начинаем игру!\n";
         }
         if("статистика".equals(message))
         {

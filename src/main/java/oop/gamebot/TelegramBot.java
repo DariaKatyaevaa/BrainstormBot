@@ -1,6 +1,6 @@
 package oop.gamebot;
 
-import oop.gamebot.games.words.GameWords;
+import org.json.simple.parser.ParseException;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -8,8 +8,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import javax.validation.constraints.Null;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 
 class TelegramBot extends TelegramLongPollingBot
@@ -31,6 +31,10 @@ class TelegramBot extends TelegramLongPollingBot
                 workWithGroup(update);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
         else {
@@ -40,6 +44,10 @@ class TelegramBot extends TelegramLongPollingBot
                 try {
                     userManager.setUser(chatId, new User(chatId));
                 } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
                 userManager.setMessageHandler(userManager.getUsers().get(chatId),
@@ -64,7 +72,7 @@ class TelegramBot extends TelegramLongPollingBot
         }
     }
 
-    private void workWithGroup(Update update) throws FileNotFoundException {
+    private void workWithGroup(Update update) throws IOException, ParseException {
         Long chatId = update.getMessage().getChatId();
         List<org.telegram.telegrambots.meta.api.objects.User> users;
         users = update.getMessage().getNewChatMembers();
@@ -159,6 +167,27 @@ class TelegramBot extends TelegramLongPollingBot
                 user.isPlayingCity(true);
                 sendMessage.setReplyMarkup(replyKeyboardMarkup);
                 sendMessage.setText(user.getGameCities().startGame());
+            }
+        }
+        else if("энциклопедия".equals(message))
+        {
+            if(isGroup)
+            {
+                chatManagerHashMap.get(chatId).isPlaying(true);
+                chatManagerHashMap.get(chatId).isPlayingThesaurus(true);
+                Map<Integer, User> users = chatManagerHashMap.get(chatId).getUsers();
+                for (Integer id : users.keySet())
+                {
+                    users.get(id).isPlayingThesaurus(true);
+                    users.get(id).isPlaying(true);
+                }
+                sendMessage.setReplyMarkup(replyKeyboardMarkup);
+                sendMessage.setText(chatManagerHashMap.get(chatId).getGameThesaurus().startGame());
+            }
+            else {
+                user.isPlayingThesaurus(true);
+                sendMessage.setReplyMarkup(replyKeyboardMarkup);
+                sendMessage.setText(user.getGameThesaurus().startGame());
             }
         }
         else if("арифметика".equals(message))
@@ -278,6 +307,35 @@ class TelegramBot extends TelegramLongPollingBot
                 user.isPlaying(false);
                 messageHandler.isStartGameTG(false);
             }
+
+        }
+        else if(user.isPlayingThesaurus() && user.isPlaying() && !user.getGameThesaurus().isStopGame())
+        {
+            String msg = getMessage(update).replace("/", "").trim();
+            if(isGroup)
+                sendMessage(chatManagerHashMap.get(chatId).getGameThesaurus().giveAnswerToUser(msg), chatId);
+            else
+                sendMessage(user.getGameThesaurus().giveAnswerToUser(msg), chatId);
+
+            if(user.getGameThesaurus().isStopGame() |
+                    (isGroup && chatManagerHashMap.get(chatId).getGameThesaurus().isStopGame()))
+            {
+                if(isGroup)
+                {
+                    chatManagerHashMap.get(chatId).isPlaying(false);
+                    chatManagerHashMap.get(chatId).isPlayingCalculate(false);
+                    Map<Integer, User> users = chatManagerHashMap.get(chatId).getUsers();
+                    for (Integer id : users.keySet())
+                    {
+                        users.get(id).isPlayingThesaurus(false);
+                        users.get(id).isPlaying(false);
+                    }
+                }
+                user.isPlayingThesaurus(false);
+                user.isPlaying(false);
+                messageHandler.isStartGameTG(false);
+            }
+
         }
     }
 

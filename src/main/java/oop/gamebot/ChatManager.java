@@ -2,9 +2,11 @@ package oop.gamebot;
 
 import oop.gamebot.games.calculate.GameCalculate;
 import oop.gamebot.games.cities.GameCities;
+import oop.gamebot.games.thesaurus.GameThesaurus;
 import oop.gamebot.games.words.GameWords;
+import org.json.simple.parser.ParseException;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,22 +19,27 @@ class ChatManager
     private boolean isPlayingWord;
     private boolean isPlayingCity;
     private boolean isPlayingCalculate;
+    private boolean isPlayingThesaurus;
     private GameWords gameWords;
     private GameCities gameCities;
     private GameCalculate gameCalculate;
+    private GameThesaurus gameThesaurus;
     private User user = new User(0);
 
-    ChatManager(Long chatId) throws FileNotFoundException {
+    ChatManager(Long chatId) throws IOException, ParseException {
         this.chatId = chatId;
         users = new HashMap<>();
         messageHandler = new MessageHandler(user);
         gameWords = new GameWords(user);
         gameCalculate = new GameCalculate(user);
         gameCities = new GameCities(user);
+        gameThesaurus = new GameThesaurus(user);
         isPlaying = false;
         isPlayingWord = false;
         isPlayingCity = false;
         isPlayingCalculate = false;
+        isPlayingThesaurus = false;
+
     }
 
     Long getChatId()
@@ -48,6 +55,11 @@ class ChatManager
     User getUser()
     {
         return user;
+    }
+
+    GameThesaurus getGameThesaurus()
+    {
+        return gameThesaurus;
     }
 
     GameWords getGameWords()
@@ -117,5 +129,15 @@ class ChatManager
     void isPlayingCity(boolean status)
     {
         isPlayingCity = status;
+    }
+
+    boolean isPlayingThesaurus()
+    {
+        return isPlayingThesaurus;
+    }
+
+    void isPlayingThesaurus(boolean status)
+    {
+        isPlayingThesaurus = status;
     }
 }

@@ -1,9 +1,12 @@
 package oop.gamebot;
 import oop.gamebot.games.calculate.GameCalculate;
 import oop.gamebot.games.cities.GameCities;
+import oop.gamebot.games.thesaurus.GameThesaurus;
 import oop.gamebot.games.words.GameWords;
+import org.json.simple.parser.ParseException;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,21 +17,25 @@ public class User
     private GameWords gameWords;
     private GameCities gameCities;
     private GameCalculate gameCalculate;
+    private GameThesaurus gameThesaurus;
     private boolean isPlaying;
     private boolean isPlayingWord;
     private boolean isPlayingCity;
     private boolean isPlayingCalculate;
+    private boolean isPlayingThesaurus;
 
-    User(Long userId) throws FileNotFoundException {
+    User(Long userId) throws IOException, ParseException {
         this.userId = userId;
         gameWords = new GameWords(this);
         gameCalculate = new GameCalculate(this);
         gameCities = new GameCities(this);
+        gameThesaurus = new GameThesaurus(this);
         CreateStatisticMap();
         isPlaying = false;
         isPlayingWord = false;
         isPlayingCity = false;
         isPlayingCalculate = false;
+        isPlayingThesaurus = false;
     }
 
     User(Integer userId) throws FileNotFoundException {
@@ -66,6 +73,11 @@ public class User
         return gameWords;
     }
 
+    GameThesaurus getGameThesaurus()
+    {
+        return gameThesaurus;
+    }
+
     GameCalculate getGameCalculate()
     {
         return gameCalculate;
@@ -84,6 +96,16 @@ public class User
     boolean isPlayingWord()
     {
         return isPlayingWord;
+    }
+
+    boolean isPlayingThesaurus()
+    {
+        return isPlayingThesaurus;
+    }
+
+    void isPlayingThesaurus(boolean status)
+    {
+        isPlayingThesaurus = status;
     }
 
     boolean isPlayingCalculate()
@@ -130,6 +152,7 @@ public class User
         statistic.put("Слова", numbersWord);
         statistic.put("Арифметика", numbersCalc);
         statistic.put("Города", numbersCity);
+        statistic.put("Энциклопедия", numbersCity);
     }
 
     public String StatisticToString()
@@ -141,6 +164,9 @@ public class User
                 "Побед: " + statistic.get("Арифметика")[0] + "\n" +
                 "Поражений: " + statistic.get("Арифметика")[1] + "\n\n" +
                 "    Игра ГОРОДА   \n" +
+                "Побед: " + statistic.get("Города")[0] + "\n" +
+                "Поражений: " + statistic.get("Города")[1] + "\n" +
+                "    Игра ЭНЦИКЛОПЕДИЯ   \n" +
                 "Побед: " + statistic.get("Города")[0] + "\n" +
                 "Поражений: " + statistic.get("Города")[1] + "\n";
     }

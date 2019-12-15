@@ -1,22 +1,23 @@
 package oop.gamebot;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Scanner;
 
 import oop.gamebot.games.calculate.GameCalculate;
 import oop.gamebot.games.cities.GameCities;
+import oop.gamebot.games.thesaurus.GameThesaurus;
 import oop.gamebot.games.words.GameWords;
+import org.json.simple.parser.ParseException;
 
 class ConsoleBot
 {
     private Scanner sc;
     private User user = new User((long) 0);
 
-    ConsoleBot() throws FileNotFoundException {
+    ConsoleBot() throws IOException, ParseException {
         sc = new Scanner(System.in);
     }
 
-    void start() throws FileNotFoundException
-    {
+    void start() throws IOException, ParseException {
         MessageHandler messageHandler = new MessageHandler(user);
         while (true)
         {
@@ -47,8 +48,7 @@ class ConsoleBot
         System.out.println(messageSend);
     }
 
-    private void StartGame(String game) throws FileNotFoundException
-    {
+    private void StartGame(String game) throws IOException, ParseException {
         if("Слова".equals(game))
         {
             GameWords gameWords = new GameWords(user);
@@ -82,6 +82,18 @@ class ConsoleBot
             {
                 String msg = getMessage(sc);
                 sendMessage(gameCalculate.giveAnswerToUser(msg));
+            }
+
+        }
+        else if("Энциклопедия".equals(game))
+        {
+            GameThesaurus gameThesaurus = new GameThesaurus(user);
+            sendMessage(gameThesaurus.startGame());
+            sendMessage(gameThesaurus.getQuestion());
+            while (!gameThesaurus.isStopGame())
+            {
+                String msg = getMessage(sc);
+                sendMessage(gameThesaurus.giveAnswerToUser(msg));
             }
 
         }
